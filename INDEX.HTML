@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+     document.writeln('Password generator')
+
+
+
+var letters = "1234567890qwertyuiop!@#$%^&*()*-/+";
+
+function generatePassword(length) {
+  var password = "";
+
+  for (var i = 0; i < length; i++) {
+
+    var randomIndex = Math.floor(Math.random() * letters.length);
+ 
+    password += letters.charAt(randomIndex);
+  }
+
+  return password;
+}
+
+document.writeln("<br><br>")
+document.writeln(generatePassword(10));
+    </script>
+</body>
+</html>

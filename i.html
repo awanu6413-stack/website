@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Documentation - Single File</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS VARIABLES & THEMES --- */
+        :root {
+            --primary: #7952b3;
+            --primary-light: #f1e9ff;
+            --bg: #ffffff;
+            --text: #212529;
+            --border: #e9ecef;
+            --sidebar-bg: #f8f9fa;
+            --code-bg: #212529;
+            --code-text: #f8f9fa;
+            --nav-height: 64px;
+            --sidebar-width: 260px;
+            --toc-width: 240px;
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg: #121417;
+            --text: #f8f9fa;
+            --border: #2d3238;
+            --sidebar-bg: #1a1d21;
+            --primary-light: #2d243d;
+        }
+
+        /* --- RESET & BASE STYLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            line-height: 1.6;
+            transition: background-color 0.3s;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            position: fixed; top: 0; width: 100%; height: var(--nav-height);
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; z-index: 1000; padding: 0 1.5rem;
+        }
+        .nav-container { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; text-decoration: none; color: var(--text); font-size: 1.4rem; }
+        .logo span { color: var(--primary); }
+        
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .icon-btn { background: none; border: none; color: var(--text); cursor: pointer; font-size: 1.2rem; }
+
+        /* --- LAYOUT GRID --- */
+        .docs-layout {
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr var(--toc-width);
+            margin-top: var(--nav-height);
+            min-height: 100vh;
+        }
+
+        /* --- LEFT SIDEBAR --- */
+        .sidebar-left { 
+            background: var(--sidebar-bg); 
+            border-right: 1px solid var(--border); 
+            padding: 2rem 1.5rem; 
+            position: sticky; top: var(--nav-height); 
+            height: calc(100vh - var(--nav-height));
+            overflow-y: auto;
+        }
+        .sidebar-nav h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin: 1.5rem 0 0.5rem; }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav a { text-decoration: none; color: var(--text); font-size: 0.95rem; display: block; padding: 6px 0; opacity: 0.7; transition: var(--transition); }
+        .sidebar-nav a:hover, .sidebar-nav a.active { opacity: 1; color: var(--primary); padding-left: 5px; }
+
+        /* --- MAIN CONTENT --- */
+        .docs-main { padding: 3rem 8%; max-width: 100%; overflow-x: hidden; }
+        section { margin-bottom: 5rem; scroll-margin-top: 100px; }
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        h2 { font-size: 1.8rem; margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+        .lead { font-size: 1.2rem; color: #6c757d; margin-bottom: 2rem; }
+
+        /* --- ADVANCED CODE BLOCKS --- */
+        .code-wrapper { 
+            background: var(--code-bg); 
+            border-radius: 8px; 
+            margin: 1.5rem 0; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .code-header { 
+            background: rgba(255,255,255,0.1); 
+            padding: 10px 16px; 
+            display: flex; justify-content: space-between; 
+            align-items: center; color: #adb5bd; 
+            font-family: monospace; font-size: 0.85rem;
+        }
+        .copy-btn { 
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); 
+            color: #fff; padding: 4px 10px; border-radius: 4px; 
+            cursor: pointer; font-size: 0.75rem; transition: 0.2s; 
+        }
+        .copy-btn:hover { background: var(--primary); }
+        pre { padding: 1.5rem; overflow-x: auto; color: var(--code-text); font-family: 'Consolas', 'Monaco', monospace; }
+
+        /* --- EXAMPLE BOX --- */
+        .example-preview {
+            padding: 2rem; border: 1px solid var(--border);
+            border-radius: 8px 8px 0 0; background: var(--bg);
+            display: flex; gap: 10px; flex-wrap: wrap;
+        }
+        .example-preview + .code-wrapper { border-top-left-radius: 0; border-top-right-radius: 0; margin-top: 0; }
+
+        /* --- RIGHT TOC --- */
+        .sidebar-right { padding: 2rem 1.5rem; position: sticky; top: var(--nav-height); height: calc(100vh - var(--nav-height)); }
+        .toc-wrapper h5 { font-size: 0.85rem; margin-bottom: 1rem; text-transform: uppercase; color: var(--text); opacity: 0.6; }
+        .toc-wrapper ul { list-style: none; border-left: 2px solid var(--border); }
+        .toc-wrapper li a { text-decoration: none; color: var(--text); font-size: 0.9rem; display: block; padding: 4px 15px; opacity: 0.6; transition: 0.2s; }
+        .toc-wrapper li a:hover { opacity: 1; color: var(--primary); }
+
+        /* --- COMPONENTS --- */
+        .btn { padding: 0.6rem 1.2rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        .menu-toggle { display: none; font-size: 1.5rem; background: none; border: none; color: var(--text); cursor: pointer; }
+
+        @media (max-width: 1100px) {
+            .docs-layout { grid-template-columns: var(--sidebar-width) 1fr; }
+            .sidebar-right { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; margin-right: 1rem; }
+            .docs-layout { grid-template-columns: 1fr; }
+            .sidebar-left { 
+                position: fixed; left: -100%; top: var(--nav-height); 
+                width: 280px; z-index: 2000; transition: 0.3s; background: var(--bg);
+            }
+            .sidebar-left.active { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+            .docs-main { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left" style="display: flex; align-items: center;">
+                <button class="menu-toggle" id="mobile-toggle"><i class="fas fa-bars"></i></button>
+                <a href="#" class="logo">Custom<span>CSS</span></a>
+            </div>
+            <div class="nav-right">
+                <button id="theme-toggle" class="icon-btn" title="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="docs-layout">
+        <aside class="sidebar-left" id="sidebar">
+            <nav class="sidebar-nav">
+                <h4>Getting Started</h4>
+                <ul>
+                    <li><a href="#intro" class="active">Introduction</a></li>
+                    <li><a href="#installation">Installation</a></li>
+                </ul>
+                <h4>Components</h4>
+                <ul>
+                    <li><a href="#buttons">Buttons</a></li>
+                    <li><a href="#alerts">Alerts</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-main">
+            <section id="intro">
+                <h1>Introduction</h1>
+                <p class="lead">The most advanced documentation template for your next project.</p>
+                <p>Welcome to the CustomCSS documentation. This template is designed to be fully responsive, feature-rich, and easy to customize. It includes built-in dark mode and code-copying functionality.</p>
+            </section>
+
+            <section id="installation">
+                <h2>Installation</h2>
+                <p>To get started, install our package via your favorite package manager:</p>
+                
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>Terminal</span>
+                        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code class="code-content">npm install custom-css-toolkit --save-dev</code></pre>
+                </div>
+            </section>
+
+            <section id="buttons">
+                <h2>Buttons</h2>
+                <p>Use our custom button styles for actions in forms, dialogs, and more.</p>
+                
+                <div class="example-preview">
+                    <button class="btn btn-primary">Primary Button</button>
+                    <button class="btn btn-outline">Outline Button</button>
+                </div>
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>HTML</span>
+                        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code class="code-content">&lt;button class="btn btn-primary"&gt;Primary Button&lt;/button&gt;
+&lt;button class="btn btn-outline"&gt;Outline Button&lt;/button&gt;</code></pre>
+                </div>
+            </section>
+
+            <section id="alerts">
+                <h2>Alerts</h2>
+                <p>Click the copy button below to test the advanced clipboard feature.</p>
+                
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>JavaScript</span>
+                        <button class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code class="code-content">function greet() {
+  console.log("Hello World!");
+}</code></pre>
+                </div>
+            </section>
+        </main>
+
+        <aside class="sidebar-right">
+            <div class="toc-wrapper">
+                <h5>On this page</h5>
+                <ul>
+                    <li><a href="#intro">Introduction</a></li>
+                    <li><a href="#installation">Installation</a></li>
+                    <li><a href="#buttons">Buttons</a></li>
+                    <li><a href="#alerts">Alerts</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // 1. Dark Mode Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            const isLight = body.getAttribute('data-theme') === 'light';
+            const newTheme = isLight ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+            
+            // Update Icon
+            themeToggle.innerHTML = isLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            
+            // Save preference
+            localStorage.setItem('doc-theme', newTheme);
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('doc-theme');
+        if (savedTheme) {
+            body.setAttribute('data-theme', savedTheme);
+            themeToggle.innerHTML = savedTheme === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        }
+
+        // 2. Mobile Sidebar Toggle
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const sidebar = document.getElementById('sidebar');
+
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Close sidebar when clicking links on mobile
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+            });
+        });
+
+        // 3. Advanced Copy to Clipboard
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const wrapper = button.closest('.code-wrapper');
+                const code = wrapper.querySelector('.code-content').innerText;
+
+                navigator.clipboard.writeText(code).then(() => {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    button.classList.add('success');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.classList.remove('success');
+                    }, 2000);
+                });
+            });
+        });
+
+        // 4. Smooth Active Link Highlighting (Sidebar)
+        window.addEventListener('scroll', () => {
+            let current = "";
+            const sections = document.querySelectorAll('section');
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 120) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.sidebar-nav a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').includes(current)) {
+                    a.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

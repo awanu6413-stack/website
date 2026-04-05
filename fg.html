@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWAN CART | Premium Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --secondary: #6366f1;
+            --dark: #1e293b;
+            --slate: #64748b;
+            --white: #ffffff;
+            --bg: #f1f5f9;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+        }
+
+        * { box-sizing: border-box; transition: all 0.2s ease; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: var(--dark);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background: var(--white);
+            width: 100%;
+            max-width: 900px;
+            padding: 45px;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            margin: auto;
+        }
+
+        .header-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-left: 6px solid var(--primary);
+            padding-left: 20px;
+        }
+
+        /* Branding Styles */
+        .brand-name { 
+            margin: 0; 
+            font-size: 2.2rem; 
+            font-weight: 800; 
+            letter-spacing: -0.05em; 
+            color: var(--dark);
+            text-transform: uppercase;
+        }
+        .brand-name span { color: var(--primary); }
+        
+        .header-text p { margin: 4px 0 0; color: var(--slate); font-size: 0.95rem; }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .input-field {
+            flex: 2;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .price-input { flex: 1; }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 35px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-add { background: var(--primary); color: white; flex: 1; }
+        .btn-add:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        .btn-print { background: var(--dark); color: white; }
+        .btn-print:hover { background: #000; }
+
+        .btn-clear { background: #fff; color: var(--danger); border: 1px solid #fee2e2; }
+        .btn-clear:hover { background: #fee2e2; }
+
+        .btn-delete {
+            background: transparent;
+            color: var(--slate);
+            padding: 8px;
+            font-size: 0.8rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-delete:hover {
+            color: var(--danger);
+            background: #fef2f2;
+            border-color: #fee2e2;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: #fff;
+        }
+
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { background: #f8fafc; padding: 18px; font-size: 0.75rem; text-transform: uppercase; color: var(--slate); text-align: left; border-bottom: 1px solid var(--border); }
+        td { padding: 18px; border-bottom: 1px solid #f8fafc; font-size: 1rem; }
+
+        .discount-badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.8rem;
+        }
+
+        .summary-card {
+            margin-top: 35px;
+            background: var(--dark);
+            color: white;
+            padding: 28px 35px;
+            border-radius: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-label { text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; opacity: 0.6; display: block; margin-bottom: 4px; }
+        .total-price { font-size: 2.2rem; font-weight: 800; color: var(--primary); margin: 0; }
+        .subtotal-text { font-size: 1.1rem; opacity: 0.9; text-decoration: line-through; color: #f87171; }
+
+        @media (max-width: 650px) {
+            .input-group { flex-direction: column; }
+            .container { padding: 20px; }
+        }
+
+        /* PRINT EXPORT SETTINGS */
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 20px; }
+            .input-group, .controls, .btn-delete { display: none !important; }
+            .header-box { border-left: 10px solid var(--primary); margin-bottom: 50px; }
+            .brand-name { font-size: 3rem; text-align: center; width: 100%; }
+            .summary-card { 
+                background: white !important; 
+                color: black !important; 
+                border-top: 2px dashed var(--dark); 
+                border-radius: 0;
+            }
+            .total-price { color: black !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-box">
+        <div class="header-text">
+            <h1 class="brand-name">AWAN <span>CART</span></h1>
+            <p id="dateDisplay"></p>
+        </div>
+        <div style="text-align: right;" class="hide-on-print">
+            <span class="discount-badge">OFFICIAL TRACKER</span>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="itemName" class="input-field" placeholder="Item name">
+        <input type="number" id="itemPrice" class="input-field price-input" placeholder="Price ($)">
+        <button class="btn-add" onclick="addItem()">Add to Cart</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn-print" onclick="window.print()">Export List</button>
+        <button class="btn-clear" onclick="clearHistory()">Clear Cart</button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ref ID</th>
+                    <th>Item Description</th>
+                    <th>Unit Cost</th>
+                    <th style="text-align: center;" class="hide-on-print">Action</th>
+                </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+        </table>
+    </div>
+    
+    <div id="empty-msg" style="padding: 60px; color: var(--slate); text-align: center; display: none;">
+        <p>AWAN CART is empty. Start adding items to generate a report.</p>
+    </div>
+
+    <div class="summary-card" id="totalCard" style="display: none;">
+        <div>
+            <span class="total-label">Subtotal</span>
+            <div id="subtotalDisplay" class="subtotal-text">$0.00</div>
+            <span id="discountTag" class="discount-badge">0% OFF Applied</span>
+        </div>
+        <div style="text-align: right;">
+            <span class="total-label">Total Payable</span>
+            <h2 id="grandTotal" class="total-price">$0.00</h2>
+        </div>
+    </div>
+</div>
+
+<script>
+    let entries = JSON.parse(localStorage.getItem('discountData')) || [];
+    document.getElementById("dateDisplay").innerText = "Invoice Date: " + new Date().toLocaleDateString();
+
+    window.onload = renderTable;
+
+    function addItem() {
+        const nameEl = document.getElementById("itemName");
+        const priceEl = document.getElementById("itemPrice");
+        const name = nameEl.value.trim();
+        const price = parseFloat(priceEl.value);
+
+        if (!name || isNaN(price) || price <= 0) {
+            alert("Please provide both a valid item name and price.");
+            return;
+        }
+
+        entries.push({ name, price });
+        nameEl.value = "";
+        priceEl.value = "";
+        nameEl.focus();
+        syncStorage();
+    }
+
+    function removeItem(index) {
+        entries.splice(index, 1);
+        syncStorage();
+    }
+
+    function syncStorage() {
+        localStorage.setItem('discountData', JSON.stringify(entries));
+        renderTable();
+    }
+
+    function renderTable() {
+        const body = document.getElementById("historyBody");
+        const card = document.getElementById("totalCard");
+        const empty = document.getElementById("empty-msg");
+        
+        body.innerHTML = "";
+
+        if (entries.length === 0) {
+            card.style.display = "none";
+            empty.style.display = "block";
+            return;
+        }
+
+        card.style.display = "flex";
+        empty.style.display = "none";
+        
+        let subtotal = 0;
+
+        entries.forEach((item, index) => {
+            subtotal += item.price;
+            const row = body.insertRow();
+            row.innerHTML = `
+                <td style="font-weight: 600; color: var(--slate);">#AC-00${index + 1}</td>
+                <td style="font-weight: 600;">${item.name}</td>
+                <td>$${item.price.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                <td style="text-align: center;" class="hide-on-print">
+                    <button class="btn-delete" onclick="removeItem(${index})">Remove</button>
+                </td>
+            `;
+        });
+
+        let discountPercent = subtotal >= 10000 ? 50 : subtotal >= 5000 ? 25 : subtotal >= 3000 ? 10 : 0;
+        let finalPayable = subtotal - (subtotal * (discountPercent / 100));
+
+        document.getElementById("subtotalDisplay").innerText = "$" + subtotal.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById("discountTag").innerText = discountPercent + "% DISCOUNT APPLIED";
+        document.getElementById("grandTotal").innerText = "$" + finalPayable.toLocaleString(undefined, {minimumFractionDigits: 2});
+        
+        document.getElementById("subtotalDisplay").style.display = discountPercent > 0 ? "block" : "none";
+        document.getElementById("discountTag").style.display = discountPercent > 0 ? "inline-block" : "none";
+    }
+
+    function clearHistory() {
+        if (confirm("Confirm: Clear all items from AWAN CART?")) {
+            entries = [];
+            syncStorage();
+        }
+    }
+
+    document.getElementById("itemPrice").addEventListener("keypress", (e) => { if (e.key === "Enter") addItem(); });
+</script>
+
+</body>
+</html>

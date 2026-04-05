@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevDocs | Modern Documentation Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7952b3;
+            --primary-dark: #5a3a8c;
+            --primary-glow: rgba(121, 82, 179, 0.15);
+            --bg: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Animated Background --- */
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .blob {
+            position: absolute;
+            width: 80vw; height: 80vw;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: move 25s infinite alternate ease-in-out;
+        }
+
+        @keyframes move {
+            from { transform: translate(-20%, -20%); }
+            to { transform: translate(30%, 10%); }
+        }
+
+        /* --- Navigation --- */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%;
+            height: 70px;
+            position: fixed;
+            width: 100%;
+            top: 0; z-index: 1000;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .logo { font-weight: 800; font-size: 1.4rem; color: var(--primary); letter-spacing: -0.5px; }
+
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        
+        .nav-links a { 
+            text-decoration: none; 
+            color: var(--text-main); 
+            font-weight: 600; 
+            font-size: 0.9rem; 
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        /* Burger Menu */
+        .burger { display: none; cursor: pointer; z-index: 1100; }
+        .burger div { width: 25px; height: 2px; background: var(--text-main); margin: 5px; transition: 0.3s; }
+
+        /* --- Hero Section --- */
+        .hero {
+            padding: 140px 5% 80px;
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 4rem;
+        }
+
+        @media (min-width: 1024px) {
+            .hero { flex-direction: row; text-align: left; min-height: 90vh; padding-top: 80px; }
+            .hero-content { flex: 1.2; }
+            .hero-visual { flex: 1; }
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            line-height: 1.1;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content p {
+            font-size: clamp(1.1rem, 2vw, 1.25rem);
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            max-width: 550px;
+        }
+
+        /* --- Code Window --- */
+        .code-window {
+            background: #0f172a;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.1s ease-out;
+        }
+
+        @media (max-width: 1024px) {
+            .code-window { animation: float 6s ease-in-out infinite; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .dots { display: flex; gap: 6px; margin-bottom: 16px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        /* --- Buttons --- */
+        .cta-group { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+        @media (min-width: 1024px) { .cta-group { justify-content: flex-start; } }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: inline-block;
+        }
+
+        .btn-primary { background: var(--primary); color: white; border: none; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-3px); }
+
+        .btn-outline { border: 1px solid #e2e8f0; color: var(--text-main); }
+        .btn-outline:hover { background: #f8fafc; }
+
+        /* --- Features Section --- */
+        .features {
+            padding: 80px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid rgba(0,0,0,0.05);
+            backdrop-filter: blur(8px);
+            transition: var(--transition);
+        }
+
+        .card:hover { 
+            background: #fff;
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            border-color: var(--primary);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 80px 5% 40px;
+            margin-top: 80px;
+        }
+
+        .footer-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-brand .logo { margin-bottom: 1rem; }
+        .footer-brand p { color: var(--text-muted); font-size: 0.9rem; max-width: 250px; }
+
+        .footer-column h4 {
+            font-size: 0.9rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-column ul { list-style: none; }
+        .footer-column ul li { margin-bottom: 0.8rem; }
+        .footer-column ul li a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        .footer-column ul li a:hover { color: var(--primary); padding-left: 5px; }
+
+        .newsletter-form {
+            display: flex; gap: 0.5rem; background: white;
+            padding: 6px; border-radius: 12px; border: 1px solid #e2e8f0;
+            margin-top: 1rem;
+        }
+        .newsletter-form input { border: none; padding: 10px; flex: 1; outline: none; }
+        
+        .footer-bottom {
+            max-width: 1300px;
+            margin: 60px auto 0;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed; right: 0; top: 0; height: 100vh; width: 100%;
+                background: white; flex-direction: column; justify-content: center;
+                transform: translateX(100%); transition: transform 0.5s ease-in-out;
+                z-index: 1000;
+            }
+            .burger { display: block; }
+            .nav-active { transform: translateX(0%); }
+            
+            .toggle .line1 { transform: rotate(-45deg) translate(-5px, 6px); }
+            .toggle .line2 { opacity: 0; }
+            .toggle .line3 { transform: rotate(45deg) translate(-5px, -6px); }
+
+            .footer-bottom { flex-direction: column; text-align: center; }
+        }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: 1s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"><div class="blob"></div></div>
+
+    <nav class="nav">
+        <div class="logo">DevDocs</div>
+        <div class="nav-links" id="navLinks">
+            <a href="#features">Platform</a>
+            <a href="#">Resources</a>
+            <a href="#">Pricing</a>
+            <a href="#" class="btn btn-primary" style="color:white; padding: 10px 20px;">Get Started</a>
+        </div>
+        <div class="burger" onclick="toggleMenu()">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+    </nav>
+
+    <main class="hero">
+        <div class="hero-content reveal">
+            <h1>Docs that <br><span style="color:var(--primary)">scale with you.</span></h1>
+            <p>The high-performance documentation engine. Beautifully designed, SEO optimized, and ready for any device on day one.</p>
+            <div class="cta-group">
+                <a href="#" class="btn btn-primary">Start Building Free</a>
+                <a href="#" class="btn btn-outline">Watch Demo</a>
+            </div>
+        </div>
+
+        <div class="hero-visual reveal">
+            <div class="code-window" id="codeCard">
+                <div class="dots">
+                    <div class="dot" style="background:#ff5f56"></div>
+                    <div class="dot" style="background:#ffbd2e"></div>
+                    <div class="dot" style="background:#27c93f"></div>
+                </div>
+                <pre style="color: #abb2bf; font-family: 'Fira Code', monospace; font-size: 0.85rem; line-height: 1.6;">
+<span style="color: #c678dd;">const</span> <span style="color: #e06c75;">project</span> = <span style="color: #c678dd;">await</span> <span style="color: #e06c75;">DevDocs</span>.<span style="color: #61afef;">deploy</span>({
+  <span style="color: #d19a66;">framework</span>: <span style="color: #98c379;">'React'</span>,
+  <span style="color: #d19a66;">edge</span>: <span style="color: #d19a66;">true</span>,
+  <span style="color: #d19a66;">analytics</span>: <span style="color: #98c379;">'active'</span>
+});</pre>
+            </div>
+        </div>
+    </main>
+
+    <section id="features" class="features">
+        <div class="card reveal">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">⚡</div>
+            <h3>Edge Optimized</h3>
+            <p>Delivered from 300+ global locations for near-zero latency worldwide.</p>
+        </div>
+        <div class="card reveal">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">🛡️</div>
+            <h3>Enterprise Security</h3>
+            <p>Built-in SSO, role-based access control, and 99.9% uptime guarantees.</p>
+        </div>
+        <div class="card reveal">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">💎</div>
+            <h3>Premium UI</h3>
+            <p>Hand-crafted components that provide an elite experience for your users.</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="logo">DevDocs</div>
+                <p>The standard for technical documentation. Built for developers, by developers.</p>
+            </div>
+            <div class="footer-column">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Security</a></li>
+                    <li><a href="#">Roadmap</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Docs</a></li>
+                    <li><a href="#">API</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Subscribe</h4>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="Email address">
+                    <button class="btn-primary" style="padding: 5px 15px; border-radius: 8px; cursor:pointer;">Go</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 DevDocs Engine Inc.</p>
+            <div style="display:flex; gap: 20px;">
+                <a href="#" style="text-decoration:none; color:var(--text-muted)">GitHub</a>
+                <a href="#" style="text-decoration:none; color:var(--text-muted)">Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        function toggleMenu() {
+            const nav = document.getElementById('navLinks');
+            const burger = document.querySelector('.burger');
+            nav.classList.toggle('nav-active');
+            burger.classList.toggle('toggle');
+            document.body.style.overflow = nav.classList.contains('nav-active') ? 'hidden' : 'initial';
+        }
+
+        // Intersection Observer for Reveal Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Desktop Perspective Tilt Effect
+        const card = document.getElementById('codeCard');
+        if (window.innerWidth > 1024) {
+            document.addEventListener('mousemove', (e) => {
+                const x = (window.innerWidth / 2 - e.pageX) / 45;
+                const y = (window.innerHeight / 2 - e.pageY) / 45;
+                card.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+            });
+        }
+    </script>
+</body>
+</html>
